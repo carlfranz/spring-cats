@@ -33,6 +33,12 @@ public class OwnerController {
 		return ResponseEntity.ok(allOwners); 
 	}
 	
+	@GetMapping(path="/owners/{id}",produces="application/json")
+	public ResponseEntity<Owner>  getOwner(@PathVariable(value = "id") Integer id) {
+		Owner owner = (Owner) ownerRepository.findOne(id); 
+		return ResponseEntity.ok(owner); 
+	}
+	
 	@PostMapping(path="/owners",produces="application/json")
 	public ResponseEntity<Owner> saveOwner(@RequestBody Owner owner) {
 		ownerRepository.save(owner);
