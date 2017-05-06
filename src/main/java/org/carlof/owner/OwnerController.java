@@ -43,13 +43,33 @@ public class OwnerController {
 	public ResponseEntity<Owner> saveOwner(@PathVariable(value = "id") Integer id, @RequestBody Owner pOwner) {
 		Owner catOwner = (Owner)ownerRepository.findOne(id);
 		
-		Set<Cat> newCatList = new HashSet<Cat>();
-		for (Cat pCat : pOwner.getCats()) {
-			newCatList.add(catRepository.findOne(pCat.getId()));
-		}
-		catOwner.setCats(newCatList);
+		catOwner.setName(pOwner.getName());
+
+		saveOwnerCats(id,pOwner.getCats());
 		
 		Owner newCatOwner = ownerRepository.save(catOwner);
 		return ResponseEntity.ok(newCatOwner); 
+	}
+	
+	//// cats array
+	
+	@GetMapping(path="/owners/{id}/cats",produces="application/json")
+	public ResponseEntity<Set<Cat>> getOwnerCats(@PathVariable(value = "id") Integer id) {
+		Owner owner = (Owner) ownerRepository.findOne(id);
+		
+		return ResponseEntity.ok(owner.getCats());
+	}
+	
+	@PutMapping(path="/owners/{id}/cats",produces="application/json")
+	public ResponseEntity<Set<Cat>> saveOwnerCats(@PathVariable(value = "id") Integer id, @RequestBody Set<Cat> cats){
+		Owner owner = (Owner)ownerRepository.findOne(id);
+		
+		Set<Cat> newCatList = new HashSet<Cat>();
+		for (Cat pCat : cats) {
+			newCatList.add(catRepository.findOne(pCat.getId()));
+		}
+		owner.setCats(newCatList);
+		Owner catOwner = ownerRepository.save(owner);
+		return ResponseEntity.ok(newCatList);
 	}
 }
